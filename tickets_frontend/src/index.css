@@ -1,0 +1,225 @@
+:root {
+
+  --text: #6b6375;
+  --text-h: #08060d;
+  --bg: #fff;
+  --border: #e5e4e7;
+  --code-bg: #f4f3ec;
+  
+  --accent: #3b82f6;         
+  --accent-action: #fbbf24;  
+  --success: #22c55e;        
+  --danger: #ef4444;      
+  
+  --shadow: rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+
+  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+
+  font: 18px/145% var(--sans);
+  color: var(--text);
+  background: var(--bg);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #9ca3af;
+    --text-h: #f3f4f6;
+    --bg: #0f172a;      
+    --border: #1e293b;
+    --code-bg: #1e2028;
+    --accent: #60a5fa;   
+  }
+}
+
+body { margin: 0; }
+
+#root {
+  width: 1126px;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+
+h1 {
+  font-size: 48px;
+  color: var(--text-h);
+  text-align: center;
+  margin: 40px 0;
+  letter-spacing: -1.5px;
+}
+
+
+.btn-pdf {
+  background-color: var(--accent-action);
+  color: #000;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow);
+}
+
+.btn-pdf:hover {
+  transform: translateY(-3px);
+  filter: brightness(1.1);
+  box-shadow: 0 10px 20px rgba(251, 191, 36, 0.3);
+}
+
+/* Tabla Estilizada */
+.ticket-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 30px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.ticket-table th {
+  background: var(--code-bg);
+  color: var(--accent);
+  padding: 15px;
+  text-align: left;
+}
+
+.ticket-table tr:hover {
+  background-color: var(--accent-bg);
+}
+
+.ticket-table td {
+  padding: 15px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Badges de Estado */
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.status-badge.open { background: var(--danger); color: white; }
+.status-badge.closed { background: var(--success); color: white; }
+
+.btn-cerrar {
+  background: var(--success);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-cerrar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 10px rgba(34, 197, 94, 0.3);
+}
+
+
+.detail-card {
+  margin-top: 40px;
+  padding: 30px;
+  background: var(--code-bg);
+  border: 2px solid var(--accent);
+  border-radius: 16px;
+  text-align: left;
+  box-shadow: var(--shadow);
+}
+
+/* --- ESTILOS PARA EL PANEL DE DETALLES Y COMENTARIOS --- */
+
+/* Contenedor del input y botón enviar */
+.comment-input-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+/* Cuadro de texto para escribir notas */
+.comment-input-group input {
+  flex: 1;
+  padding: 12px 15px;
+  background-color: var(--code-bg);
+  color: var(--text-h);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: var(--sans);
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.comment-input-group input:focus {
+  border-color: var(--accent); 
+}
+
+
+.btn-enviar {
+  background-color: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 0 25px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-enviar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px var(--accent-border);
+}
+
+
+.detail-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+
+.btn-escalar {
+  background-color: #3b82f6;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-escalar:hover {
+  background-color: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+}
+
+
+.btn-volver {
+  background-color: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-volver:hover {
+  background-color: var(--border);
+  color: var(--text-h);
+}

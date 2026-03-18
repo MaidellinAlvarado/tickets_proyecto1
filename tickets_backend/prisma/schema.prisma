@@ -1,0 +1,124 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+
+enum UserRole {
+  l1_agent
+  l2_agent
+
+}
+
+enum TicketStatus {
+  open
+  in_progress
+  resolved
+  closed
+}
+
+enum TicketType {
+  incident
+  request
+}
+
+enum TicketImpact {
+  low
+  medium
+  high
+  critical
+}
+
+// ==========================================
+// 2. MODELOS 
+// ==========================================
+
+model User {
+  user_id       String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  full_name     String    @db.VarChar(100)
+  email         String    @unique @db.VarChar(100)
+  password_hash String    @db.VarChar(255)
+  role          UserRole  @default(l1_agent)
+  
+  created_at    DateTime  @default(now()) @db.Timestamptz()
+  updated_at    DateTime  @updatedAt @db.Timestamptz()
+  deleted_at    DateTime? @db.Timestamptz()
+
+  tickets       Ticket[]
+  comments      Comment[]
+
+  @@map("users")
+}
+
+model Customer {
+  nit           String    @id @db.VarChar(20)
+  company_name  String    @db.VarChar(150)
+  contact_email String?   @db.VarChar(100)
+  
+  created_at    DateTime  @default(now()) @db.Timestamptz()
+  updated_at    DateTime  @updatedAt @db.Timestamptz()
+  deleted_at    DateTime? @db.Timestamptz()
+
+  products      Product[]
+
+  @@map("customers")
+}
+
+model Product {
+  product_id    String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nit_customer  String    @db.VarChar(20)
+  product_name  String    @db.VarChar(100)
+  description   String?   @db.Text
+  
+  created_at    DateTime  @default(now()) @db.Timestamptz()
+  updated_at    DateTime  @updatedAt @db.Timestamptz()
+  deleted_at    DateTime? @db.Timestamptz()
+
+  customer      Customer  @relation(fields: [nit_customer], references: [nit], onDelete: Cascade)
+  tickets       Ticket[]
+
+  @@map("products")
+}
+
+model Ticket {
+  ticket_id        String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  product_id       String?      @db.Uuid
+  assigned_user_id String?      @db.Uuid
+  subject          String       @db.VarChar(200)
+  description      String?      @db.Text
+  type             TicketType   @default(incident)
+  impact           TicketImpact @default(low)
+  status           TicketStatus @default(open)
+  current_level    Int          @default(1)
+  
+  created_at       DateTime     @default(now()) @db.Timestamptz()
+  updated_at       DateTime     @updatedAt @db.Timestamptz()
+  deleted_at       DateTime?    @db.Timestamptz()
+
+  product          Product?     @relation(fields: [product_id], references: [product_id])
+  assigned_user    User?        @relation(fields: [assigned_user_id], references: [user_id])
+  comments         Comment[]
+
+  @@map("tickets")
+}
+
+model Comment {
+  comment_id String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ticket_id  String    @db.Uuid
+  user_id    String    @db.Uuid
+  content    String    @db.Text
+  
+  created_at DateTime  @default(now()) @db.Timestamptz()
+  updated_at DateTime  @updatedAt @db.Timestamptz()
+  deleted_at DateTime? @db.Timestamptz()
+
+  ticket     Ticket    @relation(fields: [ticket_id], references: [ticket_id], onDelete: Cascade)
+  user       User      @relation(fields: [user_id], references: [user_id])
+
+  @@map("comments")
+}

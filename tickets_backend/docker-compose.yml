@@ -1,0 +1,18 @@
+version: 'v4.60.1'
+
+services:
+  postgres_db:
+    image: postgres:15 # version de PostgreSQL
+    container_name: tickets_database # El nombre del contenedor
+    restart: always
+    environment:
+      - POSTGRES_USER=admin # Tu usuario de la base de datos
+      - POSTGRES_PASSWORD=admin123 # contraseña
+      - POSTGRES_DB=sistema_tickets # El nombre de tu base de datos
+    ports:
+      - "5432:5432" # Conectamos el puerto de Docker con el mio
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Esto guarda los datos para que no se borren 
+
+volumes:
+  postgres_data:
