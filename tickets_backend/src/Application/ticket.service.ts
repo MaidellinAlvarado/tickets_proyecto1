@@ -1,12 +1,9 @@
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
+import { prisma } from '../Infrastructure/prismaClient.js';
 
 export class TicketService {
 
-  // LÓGICA PARA CREAR UN TICKET NUEVO
-
+  // CREAR UN TICKET NUEVO
   async crearTicket(data: { subject: string; description?: string; assigned_user_id?: string; product_id?: string }) {
-    
     const nuevoTicket = await prisma.ticket.create({
       data: {
         subject: data.subject,
@@ -19,10 +16,11 @@ export class TicketService {
     return nuevoTicket;
   }
 
-  // LÓGICA PARA OBTENER TODOS LOS TICKETS
+  // OBTENER TODOS LOS TICKETS 
   async obtenerTickets() {
     const tickets = await prisma.ticket.findMany({
-      orderBy: { created_at: 'desc' }, // Los más recientes primero
+      where: { deleted_at: null }, 
+      orderBy: { created_at: 'desc' }, 
       include: {
         assigned_user: true, 
         product: true        
@@ -30,16 +28,59 @@ export class TicketService {
     });
     return tickets;
   }
-  
 
-  // LÓGICA PARA ESCALAR TICKET 
 
+  // OBTENER UN TICKET POR ID
+  async obtenerTicketPorId(ticket_id: string) {
+    const ticket = await prisma.ticket.findUnique({
+      where: { ticket_id },
+      include: {
+        assigned_user: true,
+        product: true,
+        comments: { include: { user: true } } 
+      }
+    });
+
+    // Validamos si no existe o si ya fue borrado lógicamente
+    if (!ticket || ticket.deleted_at !== null) {
+      throw new Error('Ticket no encontrado');
+    }
+
+    return ticket;
+  }
+
+  // ELIMINAR TICKET 
+  async eliminarTicket(ticket_id: string) {
+    const ticket = await prisma.ticket.findUnique({
+      where: { ticket_id }
+    });
+
+    if (!ticket) {
+      throw new Error('Ticket no encontrado');
+    }
+
+    if (ticket.deleted_at !== null) {
+      throw new Error('El ticket ya fue eliminado previamente');
+    }
+
+    // Ejecutamos el Soft Delete cambiando la fecha
+    await prisma.ticket.update({
+      where: { ticket_id },
+      data: { deleted_at: new Date() }
+    });
+
+    return true;
+  }
+
+
+  // ESCALAR TICKET 
   async escalarTicket(ticket_id: string) {
     const ticket = await prisma.ticket.findUnique({
       where: { ticket_id }
     });
-//validar que el ticket exista
-    if (!ticket) {
+    
+    // Validar que el ticket exista y NO esté borrado
+    if (!ticket || ticket.deleted_at !== null) {
       throw new Error('Ticket no encontrado');
     }
 
@@ -53,7 +94,7 @@ export class TicketService {
       throw new Error('El ticket ya se encuentra en L2');
     }
 
-    //  Actualizar el ticket a nivel 2 
+    // Actualizar el ticket a nivel 2 
     const ticketEscalado = await prisma.ticket.update({
       where: { ticket_id },
       data: {
@@ -65,15 +106,14 @@ export class TicketService {
     return ticketEscalado;
   }
 
-
-  // LÓGICA PARA CERRAR TICKET
- 
+  // CERRAR TICKET
   async cerrarTicket(ticket_id: string) {
     const ticket = await prisma.ticket.findUnique({
       where: { ticket_id }
     });
 
-    if (!ticket) {
+    // Validar que exista y NO esté borrado
+    if (!ticket || ticket.deleted_at !== null) {
       throw new Error('Ticket no encontrado');
     }
 

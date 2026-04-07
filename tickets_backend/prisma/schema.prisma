@@ -7,8 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-
 enum UserRole {
   l1_agent
   l2_agent
@@ -34,9 +32,9 @@ enum TicketImpact {
   critical
 }
 
-// ==========================================
+
 // 2. MODELOS 
-// ==========================================
+
 
 model User {
   user_id       String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid

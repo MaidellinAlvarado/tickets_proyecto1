@@ -1,4 +1,4 @@
-# Variables de Entorno (¡CRÍTICO!)
+# Variables de Entorno 
 .env
 .env.local
 .env.*
@@ -6,7 +6,6 @@
 
 # Reportes de pruebas
 coverage/
-# Logs
 logs
 *.log
 npm-debug.log*

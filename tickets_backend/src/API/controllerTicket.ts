@@ -20,7 +20,7 @@ export class TicketController {
       if (!subject) {
         return res.status(400).json({
           success: false,
-          message: 'El asunto (subject) del ticket es obligatorio.'
+          message: 'El asunto  del ticket es obligatorio.'
         });
       }
 
@@ -128,6 +128,55 @@ export class TicketController {
       res.status(500).json({
         success: false,
         message: 'Error al generar el reporte PDF: ' + error.message
+      });
+    }
+  }
+
+
+  // Tomar la petición para Obtener por ID
+  async obtenerPorId(req: Request, res: Response) {
+    try {
+      const ticketId = req.params.id as string;
+
+      if (!ticketId) {
+        return res.status(400).json({ success: false, message: "ID no proporcionado" });
+      }
+
+      const ticket = await ticketService.obtenerTicketPorId(ticketId);
+
+      return res.status(200).json({ success: true, data: ticket });
+    } catch (error: any) {
+      if (error.message === 'Ticket no encontrado') {
+        return res.status(404).json({ success: false, message: error.message });
+      }
+      return res.status(500).json({ 
+        success: false, 
+        message: "Error interno del servidor",
+        error: error.message 
+      });
+    }
+  }
+
+  // Tomar la petición para Eliminar  como soft delete.
+  async eliminar(req: Request, res: Response) {
+    try {
+      const ticketId = req.params.id as string;
+
+      if (!ticketId) {
+        return res.status(400).json({ success: false, message: "ID no proporcionado" });
+      }
+
+      await ticketService.eliminarTicket(ticketId);
+
+      return res.status(200).json({ success: true, message: "Ticket eliminado " });
+    } catch (error: any) {
+      if (error.message === 'Ticket no encontrado' || error.message === 'El ticket ya fue eliminado') {
+        return res.status(404).json({ success: false, message: error.message });
+      }
+      return res.status(500).json({ 
+        success: false, 
+        message: "Error al intentar eliminar el ticket",
+        error: error.message 
       });
     }
   }

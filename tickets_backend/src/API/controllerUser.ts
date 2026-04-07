@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcrypt'; // <--- Importamos bcrypt
+import bcrypt from 'bcrypt'; 
 
 const prisma = new PrismaClient();
 
