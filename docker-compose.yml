@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # Tu Base de Datos PostgreSQL
+  db:
+    image: postgres:15-alpine
+    container_name: tickets_db
+    restart: always
+    environment:
+      POSTGRES_USER: admin_tickets
+      POSTGRES_PASSWORD: password_seguro123
+      POSTGRES_DB: tickets_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+
+  backend:
+    build: ./tickets_backend 
+    container_name: tickets_backend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: "postgresql://admin_tickets:password_seguro123@db:5432/tickets_db?schema=public"
+    depends_on:
+      - db
+
+  # 3. Tu Frontend (React + Vite + Nginx)
+  frontend:
+    build: ./tickets_frontend  
+    container_name: tickets_frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+# Declaramos el volumen para que tus datos no se borren
+volumes:
+  postgres_data:
